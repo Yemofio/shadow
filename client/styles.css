@@ -1,0 +1,63 @@
+:root {
+  --bg: #011627;
+  --text: #d6deeb;
+  --red: #ff5874;
+  --green: #5ff7c1;
+  --yellow: #ecc48d;
+  --blue: #82aaff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 20px;
+}
+
+.terminal {
+  background: rgba(1, 22, 39, 0.8);
+  border: 1px solid #1d3b53;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  background: #0b2942;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #1d3b53;
+}
+
+.red-dot, .yellow-dot, .green-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.red-dot { background: var(--red); }
+.yellow-dot { background: var(--yellow); }
+.green-dot { background: var(--green); }
+
+.title {
+  color: var(--blue);
+  font-weight: bold;
+}
+
+.console {
+  padding: 15px;
+  height: 300px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  border-left: 2px solid #1d3b53;
+  padding-left: 10px;
+}
+
+.blocked { color: var(--red); }
+.allowed { color: var(--green); }
