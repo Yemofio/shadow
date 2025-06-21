@@ -8,10 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # ◄ REQUIRED: Uses official checkout action
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # ◄ CRITICAL FIX
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3  # ◄ REQUIRED: Deployment action
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs  # ◄ Points to your frontend files
+          publish_dir: ./docs
+          force_orphan: true  # ◄ Ensures clean deploy
