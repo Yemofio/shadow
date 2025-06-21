@@ -1,6 +1,6 @@
 // Real-time API call simulator (replace with actual Worker calls)
 async function fetchAlerts() {
-  // ▼ UPDATE THIS LINE ▼ (use your Worker URL)
+  // ▼ UPDATE THIS LINE ▼ (use Worker URL)
   const response = await fetch('https://zero-trust-gatekeeper.digneyodoi99.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
