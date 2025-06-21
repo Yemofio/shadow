@@ -1,10 +1,10 @@
 name: Deploy Frontend
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
-permissions:  # ◄ CRITICAL ADDITION
-  contents: write
+permissions:
+  contents: read
   pages: write
   id-token: write
 
@@ -15,16 +15,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v3
 
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './docs'  # ◄ Your frontend folder
+          path: 'docs/'  # Your frontend files directory
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v3
