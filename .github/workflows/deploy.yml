@@ -3,8 +3,8 @@ on:
   push:
     branches: [main]
 
+# Minimal required permissions
 permissions:
-  contents: read
   pages: write
   id-token: write
 
@@ -18,14 +18,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+      # New: Install dependencies if needed (e.g., npm ci)
+      - name: Install dependencies
+        run: |
+          cd docs
+          [ -f package.json ] && npm ci || echo "No dependencies to install"
 
-      - name: Upload Artifact
+      # Uses GitHub's native Pages deployment
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: 'docs/'  # Your frontend files directory
+          path: 'docs'  # Your frontend directory
+          # Optional: exclude README.md from deployment
+          exclude: 'README.md'  
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
