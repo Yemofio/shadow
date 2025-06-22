@@ -38,3 +38,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+  
+  deploy_worker:  # ◄ New worker deployment
+      needs: deploy_frontend
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Worker
+        working-directory: ./worker
+        run: |
+          npm install -g wrangler
+          wrangler deploy
