@@ -2,7 +2,7 @@
 const tfPromise = import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/+esm');
 
 // Pre-trained model URL (host this file in your repo's /docs/ai folder)
-const MODEL_URL = 'https://yemofio.github.io/zero-trust-gatekeeper/ai/command-model.json';
+const MODEL_URL = 'https://yemofio.github.io/zero-trust-gatekeeper/worker/ai/command-model.json';
 
 // Fallback risk scoring for when AI fails
 const calculateBasicRisk = (command) => {
