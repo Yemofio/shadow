@@ -1,63 +1,73 @@
-:root {
-  --bg: #011627;
-  --text: #d6deeb;
-  --red: #ff5874;
-  --green: #5ff7c1;
-  --yellow: #ecc48d;
-  --blue: #82aaff;
-}
-
+/* Base Styles */
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
-  padding: 20px;
+  font-family: 'Fira Code', monospace;
+  background: #011627;
+  color: #d6deeb;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.terminal {
+/* Terminal-like Container */
+.ai-container {
   background: rgba(1, 22, 39, 0.8);
   border: 1px solid #1d3b53;
   border-radius: 8px;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 1.5rem;
+  margin-top: 2rem;
 }
 
-.header {
+/* Input Field */
+#command-input {
+  width: 100%;
   background: #0b2942;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #1d3b53;
+  border: 1px solid #1d3b53;
+  color: #d6deeb;
+  padding: 0.75rem;
+  font-family: inherit;
+  margin-bottom: 1rem;
 }
 
-.red-dot, .yellow-dot, .green-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.red-dot { background: var(--red); }
-.yellow-dot { background: var(--yellow); }
-.green-dot { background: var(--green); }
-
-.title {
-  color: var(--blue);
+/* Analyze Button */
+#analyze-btn {
+  background: #5ff7c1;
+  color: #011627;
+  border: none;
+  padding: 0.75rem 1.5rem;
   font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#analyze-btn:hover {
+  background: #82aaff;
 }
 
-.console {
-  padding: 15px;
-  height: 300px;
-  overflow-y: auto;
+/* Risk Display */
+#risk-score {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+.risk-low { color: #5ff7c1; }  /* 0-0.4 */
+.risk-medium { color: #ecc48d; } /* 0.4-0.7 */
+.risk-high { color: #ff5874; }  /* 0.7-1 */
+
+/* Reasons List */
+#reasons {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+#reasons li {
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  background: rgba(255, 88, 116, 0.1);
+  border-left: 3px solid #ff5874;
 }
 
-.log-entry {
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  border-left: 2px solid #1d3b53;
-  padding-left: 10px;
+/* Responsive Design */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
 }
-
-.blocked { color: var(--red); }
-.allowed { color: var(--green); }
