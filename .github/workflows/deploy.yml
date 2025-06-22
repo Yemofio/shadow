@@ -49,5 +49,9 @@ jobs:
        env:
          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
        run: |
-         npm install -g wrangler@4.20.5
-         wrangler deploy --name zero-trust-gatekeeper
+          # Explicitly specify entry point
+          npx wrangler deploy ./index.js --name zero-trust-gatekeeper
+          
+          # Alternative if using wrangler.toml:
+          # npx wrangler deploy
+
