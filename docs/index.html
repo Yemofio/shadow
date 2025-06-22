@@ -5,6 +5,17 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
+<div class="ai-container">
+  <input id="command-input" placeholder="Enter command...">
+  <button id="analyze-btn">Analyze</button>
+  <div>
+    Risk: <span id="risk-score">0%</span>
+    <ul id="reasons"></ul>
+  </div>
+</div>
+<script src="./js/dashboard.js"></script>
+
 <body>
   <div class="terminal">
     <div class="header">
