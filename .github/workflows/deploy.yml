@@ -41,21 +41,17 @@ jobs:
   
   
   deploy_worker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Deploy Worker
-        working-directory: ./worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-         # Completely clean install
-         npm uninstall -g wrangler
-         npm install -g wrangler@4.20.5
-  
-         # Force deployment with all options
-         npx wrangler deploy ./index.js \
-           --name zero-trust-gatekeeper \
-           --compatibility-date 2025-06-22
+   runs-on: ubuntu-latest
+   steps:
+    - uses: actions/checkout@v4
+    - name: Deploy Worker
+      working-directory: ./worker
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: |
+        # Install specific wrangler version
+        npm install -g wrangler@4.20.5
+        
+        # Deploy with explicit entry point
+        wrangler deploy ./index.js --name zero-trust-gatekeeper
 
