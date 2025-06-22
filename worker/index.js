@@ -1,62 +1,102 @@
-import { explainRisk } from './ai/explainability'
-import * as tf from '@tensorflow/tfjs'
+// Use dynamic import for TensorFlow to avoid bundling issues
+const tfPromise = import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/+esm');
 
-// Add these lines after imports
-let model
-const loadModel = async () => {
-  model = await tf.loadGraphModel(
-    'https://yemofio.github.io/zero-trust-gatekeeper/ai/pretrained/command-model.json'
-  )
+// Pre-trained model URL (host this file in your repo's /docs/ai folder)
+const MODEL_URL = 'https://yemofio.github.io/zero-trust-gatekeeper/ai/command-model.json';
+
+// Fallback risk scoring for when AI fails
+const calculateBasicRisk = (command) => {
+  const rules = [
+    { pattern: /sudo\s+rm/, score: 0.9 },
+    { pattern: /wget\s+.+http:/, score: 0.7 },
+    { pattern: /chmod\s+[0-7]{3}/, score: 0.6 },
+    { pattern: /\.\/\S+/, score: 0.4 }  // Running local scripts
+  ];
+  return Math.max(...rules.map(r => 
+    r.pattern.test(command) ? r.score : 0
+  ));
+};
+
+// AI-powered risk explanation
+const explainRisk = (command, risk) => {
+  const explanations = [];
+  if (command.includes('sudo')) explanations.push('Uses sudo privileges');
+  if (command.includes('rm')) explanations.push('Contains file deletion command');
+  if (risk > 0.8) explanations.push('High-risk pattern detected');
+  return explanations.length ? explanations : ['No high-risk patterns found'];
+};
+
+// Dummy feedback storage function (replace with your own logic)
+async function storeFeedback(request) {
+  // Example: just echo back the feedback for now
+  const feedback = await request.json();
+  return new Response(JSON.stringify({
+    status: 'received',
+    feedback,
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
-loadModel() // Warm up model
 
-// Replace your existing fetch handler
 export default {
   async fetch(request) {
-    const { command, user } = await request.json()
-    
-    // AI Analysis
-    const { score, reasons } = explainRisk(command)
-    const tensorInput = tf.tensor2d([[command.length / 100, score]])
-    const aiScore = model ? (await model.predict(tensorInput).dataSync()[0] : score
-    
-    return new Response(JSON.stringify({
-      command,
-      risk: aiScore,
-      action: aiScore > 0.7 ? 'BLOCK' : 'ALLOW',
-      reasons
-    }), { 
-      headers: { 'Content-Type': 'application/json' } 
-    })
+    try {
+      const url = new URL(request.url);
+      const pathname = url.pathname;
+
+      // Handle feedback endpoint
+      if (pathname === '/api/feedback') {
+        return await storeFeedback(request);
+      }
+
+      // Default: /api/check or other endpoints
+      const { command, user = 'unknown' } = await request.json();
+
+      // 1. Get basic risk score
+      let risk = calculateBasicRisk(command);
+      let aiUsed = false;
+
+      // 2. Enhance with AI if available
+      try {
+        const tf = await tfPromise;
+        const model = await tf.loadGraphModel(MODEL_URL);
+        const input = tf.tensor2d([[
+          command.length / 100,          // Normalized length
+          risk,                          // Basic score
+          user === 'root' ? 1 : 0,       // Root user
+          new Date().getHours() / 24      // Time factor
+        ]]);
+        risk = (await model.predict(input)).dataSync()[0];
+        aiUsed = true;
+      } catch (aiError) {
+        console.warn('AI enhancement failed:', aiError);
+      }
+
+      // 3. Generate response
+      return new Response(JSON.stringify({
+        command,
+        user,
+        risk: Number(risk.toFixed(2)),
+        action: risk > 0.7 ? 'BLOCK' : 'ALLOW',
+        aiUsed,
+        explanations: explainRisk(command, risk),
+        timestamp: new Date().toISOString()
+      }), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' 
+        }
+      });
+
+    } catch (error) {
+      return new Response(JSON.stringify({
+        error: 'Invalid request',
+        details: error.message
+      }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 }
-// This is a Cloudflare Worker script that processes incoming requests
-// and evaluates the risk of a command using a pre-trained AI model.
-// It uses TensorFlow.js for model inference and a custom explainability function
-// to provide insights into the risk score.
-// The script loads the model at startup and handles requests by analyzing the command,
-// calculating a risk score, and returning an action recommendation along with reasons for the score.
-// The response includes the original command, the calculated risk score, the recommended action (BLOCK or ALLOW),
-// and any reasons for the risk assessment. The model is loaded asynchronously to ensure it is ready for inference when requests are made.
-// The script is designed to run in a serverless environment, such as Cloudflare Workers,
-// where it can handle multiple requests efficiently without maintaining state between them.
-// The AI model is expected to be a TensorFlow.js model hosted at the specified URL,
-// and the explainRisk function is a custom implementation that evaluates the command for specific keywords
-// that indicate potential risk. The risk score is calculated based on the presence of these keywords,
-// and the model's prediction is adjusted based on the command's length and the initial risk score.
-// The script is structured to be efficient and responsive, providing quick feedback on command risk
-// while leveraging AI capabilities for enhanced security analysis.
-// The script is designed to be modular, allowing for easy updates to the AI model or the explainability logic
-// without significant changes to the overall structure.
-// The use of TensorFlow.js allows for running machine learning models directly in the browser or serverless environments,
-// making it suitable for real-time applications like this command risk assessment.
-// The script is also designed to be extensible, allowing for future enhancements such as
-// integrating additional AI models, improving the explainability function, or adding more complex risk assessment logic.
-// The AI model is expected to be a TensorFlow.js model hosted at the specified URL,
-// and the explainRisk function is a custom implementation that evaluates the command for specific keywords
-// that indicate potential risk. The risk score is calculated based on the presence of these keywords,
-// and the model's prediction is adjusted based on the command's length and the initial risk score.
-// The script is structured to be efficient and responsive, providing quick feedback on command risk
-// while leveraging AI capabilities for enhanced security analysis.
-// 
-// 

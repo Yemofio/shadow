@@ -1,5 +1,11 @@
 {
   "dependencies": {
     "wrangler": "^4.20.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231002.0",
+    "@types/node": "^20.8.3",
+    "typescript": "^5.3.3"
+  },
+  "@tensorflow/tfjs": "^4.0.0"
   }
-}
