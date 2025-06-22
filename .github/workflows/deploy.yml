@@ -40,7 +40,6 @@ jobs:
         uses: actions/deploy-pages@v4
   
   deploy_worker:  # ◄ New worker deployment
-      needs: deploy_frontend
       runs-on: ubuntu-latest
       steps:
       - uses: actions/checkout@v4
