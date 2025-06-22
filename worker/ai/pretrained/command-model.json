@@ -1,0 +1,26 @@
+{
+  "format": "graph-model",
+  "generatedBy": "tfjs-converter",
+  "weightsManifest": [
+    {
+      "paths": ["group1-shard1of1.bin"],
+      "weights": [
+        {"name": "dense/kernel", "shape": [10, 1], "dtype": "float32"},
+        {"name": "dense/bias", "shape": [1], "dtype": "float32"}
+      ]
+    }
+  ],
+  "modelTopology": {
+    "layers": [
+      {
+        "class_name": "Dense",
+        "config": {
+          "name": "dense",
+          "trainable": true,
+          "units": 1,
+          "activation": "sigmoid"
+        }
+      }
+    ]
+  }
+}
