@@ -39,12 +39,16 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
   
-  deploy_worker:  # ◄ New worker deployment
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v4
-      - name: Deploy Worker
-        working-directory: ./worker
-        run: |
-          npm install -g wrangler
-          wrangler deploy
+  
+  deploy_worker:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+     - name: Deploy Worker
+       working-directory: ./worker
+       env:
+         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+       run: |
+         echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+         npm install -g wrangler@4.20.5
+         wrangler deploy
