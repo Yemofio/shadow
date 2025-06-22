@@ -1,5 +1,5 @@
 {
   "name": "zero-trust-gatekeeper",
   "compatibility_date": "2025-06-22",
-  "main": "worker/index.js"
+  "main": "index.js"
 }
